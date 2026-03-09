@@ -1,16 +1,12 @@
 package com.example.githubProject.dto;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-
 import java.time.LocalDateTime;
 
-public record GithubRepoDto(
-        Long internalId,
+public record GithubRepoUpdateRequestDto(
         String fullName,
         String description,
         String cloneUrl,
         Integer stars,
         LocalDateTime createdAt
 ) {
-
 }

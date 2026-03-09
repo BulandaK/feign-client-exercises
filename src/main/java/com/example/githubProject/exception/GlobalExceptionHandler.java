@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(GithubException.class)
     public ResponseEntity<String> handleGithubException(GithubException ex) {
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(ex.getHttpStatus())
                 .body(ex.getMessage());
     }
 }

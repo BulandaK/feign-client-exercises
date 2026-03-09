@@ -3,19 +3,15 @@ package com.example.githubProject.controller;
 import com.example.githubProject.dto.GithubRepoDto;
 import com.example.githubProject.service.RepoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/repositories")
 public class RepoController {
     private final RepoService repoService;
 
-    @GetMapping("/{owner}/{repo}")
-    GithubRepoDto getRepo(@PathVariable("owner") String owner, @PathVariable("repo") String repositoryName){
-        return repoService.getRepositoryInfo(owner,repositoryName);
+    @GetMapping("/repositories/{owner}/{repository-name}")
+    GithubRepoDto getRepo(@PathVariable("owner") String owner, @PathVariable("repository-name") String repositoryName) {
+        return repoService.getRepositoryInfo(owner, repositoryName);
     }
 }
