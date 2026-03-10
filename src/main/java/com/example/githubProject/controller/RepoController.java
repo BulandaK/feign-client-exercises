@@ -3,6 +3,7 @@ package com.example.githubProject.controller;
 import com.example.githubProject.dto.GithubRepoDto;
 import com.example.githubProject.dto.GithubRepoUpdateRequestDto;
 import com.example.githubProject.service.RepoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ public class RepoController {
     GithubRepoDto getRepo(@PathVariable("owner") String owner, @PathVariable("repository-name") String repositoryName) {
         return repoService.getRepositoryInfo(owner, repositoryName);
     }
+
     @GetMapping("/local/repositories/{owner}/{repository-name}")
     public GithubRepoDto getRepoFromDatabase(
             @PathVariable("owner") String owner,
@@ -30,7 +32,11 @@ public class RepoController {
     }
 
     @PutMapping("/repositories/{owner}/{repository-name}")
-    GithubRepoDto updateInDatabase(@PathVariable("owner") String owner, @PathVariable("repository-name") String repositoryName, @RequestBody GithubRepoUpdateRequestDto request) {
+    GithubRepoDto updateInDatabase(
+            @PathVariable("owner") String owner,
+            @PathVariable("repository-name") String repositoryName,
+            @Valid @RequestBody GithubRepoUpdateRequestDto request
+    ) {
         return repoService.updateInDatabase(owner, repositoryName, request);
     }
 
