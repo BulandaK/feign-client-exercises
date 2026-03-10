@@ -29,8 +29,8 @@ public class RepoService {
     public GithubRepoDto saveRepositoryInfo(String owner, String repo) {
         String fullName = owner + "/" + repo;
         repoValidator.validateNotExists(fullName);
-        GithubClientResponse response = githubClient.getRepoByOwnerAndName(owner, repo);
-        GithubRepo entity = repoMapper.toEntity(response);
+        GithubClientResponse clientResponse = githubClient.getRepoByOwnerAndName(owner, repo);
+        GithubRepo entity = repoMapper.toEntity(clientResponse);
         GithubRepo saved = repoRepository.save(entity);
         return repoMapper.toDto(saved);
     }
