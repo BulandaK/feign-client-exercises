@@ -35,13 +35,13 @@ public class RepoService {
         return repoMapper.toDto(saved);
     }
 
-    public GithubRepoDto getRepositoryFromDatabase(String owner, String repositoryName) {
+    public GithubRepoDto getLocalRepository(String owner, String repositoryName) {
         GithubRepo entity = repoValidator.validateAndGet(owner + "/" + repositoryName);
         return repoMapper.toDto(entity);
     }
 
     @Transactional
-    public GithubRepoDto updateInDatabase(String owner, String repositoryName, GithubRepoUpdateRequestDto request) {
+    public GithubRepoDto updateLocalRepository(String owner, String repositoryName, GithubRepoUpdateRequestDto request) {
         GithubRepo entity = repoValidator.validateAndGet(owner + "/" + repositoryName);
         GithubRepo updated = entity.update(request);
         repoRepository.save(updated);
@@ -49,7 +49,7 @@ public class RepoService {
     }
 
     @Transactional
-    public void deleteInDatabase(String owner, String repositoryName) {
+    public void deleteLocalRepository(String owner, String repositoryName) {
         GithubRepo entity = repoValidator.validateAndGet(owner + "/" + repositoryName);
         repoRepository.delete(entity);
     }

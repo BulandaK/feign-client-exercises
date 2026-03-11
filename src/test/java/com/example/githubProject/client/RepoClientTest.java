@@ -31,7 +31,7 @@ public class RepoClientTest {
     @Test
     void test() throws JsonProcessingException {
         //given
-        GithubRepo response = new GithubRepo(1L,"hospital", "my hospital app", "github.com/BulandaK/hospital", 3, null);
+        GithubRepo response = new GithubRepo(1L, "hospital", "my hospital app", "github.com/BulandaK/hospital", 3, null);
 
         wireMockServer.stubFor(WireMock.get("/repositories/owner/name").willReturn(
                 WireMock.aResponse()
@@ -46,7 +46,7 @@ public class RepoClientTest {
         assertAll(
                 () -> assertEquals("hospital", result.fullName()),
                 () -> assertEquals("my hospital app", result.description()),
-                () -> assertEquals(3,result.stars())
+                () -> assertEquals(3, result.stars())
         );
     }
 }

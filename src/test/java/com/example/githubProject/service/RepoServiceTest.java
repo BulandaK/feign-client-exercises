@@ -121,7 +121,7 @@ public class RepoServiceTest {
     }
 
     @Test
-    void getRepositoryFromDatabase_CorrectData_ReturnsGithubRepoDto() {
+    void getLocalRepository_CorrectData_ReturnsGithubRepoDto() {
         String owner = "BulandaK";
         String repo = "hospital";
         String fullName = "BulandaK/hospital";
@@ -130,7 +130,7 @@ public class RepoServiceTest {
 
         when(repoValidator.validateAndGet(anyString())).thenReturn(githubRepo);
 
-        GithubRepoDto result = repoService.getRepositoryFromDatabase(owner, repo);
+        GithubRepoDto result = repoService.getLocalRepository(owner, repo);
 
         Assertions.assertAll(
                 () -> Assertions.assertNotNull(result, "result can't be null"),
@@ -144,7 +144,7 @@ public class RepoServiceTest {
     }
 
     @Test
-    void getRepositoryFromDatabase_IncorrectData_ThrowsResourceNotFoundException() {
+    void getLocalRepository_IncorrectData_ThrowsResourceNotFoundException() {
         String owner = "BulandaK";
         String repo = "hospital";
         String fullName = owner + "/" + repo;
@@ -154,7 +154,7 @@ public class RepoServiceTest {
                 .thenThrow(new ResourceNotFoundException(expectedMessage));
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
-                () -> repoService.getRepositoryFromDatabase(owner, repo)
+                () -> repoService.getLocalRepository(owner, repo)
         );
 
         assertAll(
@@ -163,60 +163,64 @@ public class RepoServiceTest {
 
         verify(repoValidator).validateAndGet(fullName);
     }
+
     @Test
-    void updateInDatabase_CorrectData_ReturnsGithubRepoDto() {
+    void updateLocalRepository_CorrectData_ReturnsGithubRepoDto() {
         String owner = "BulandaK";
         String repo = "hospital";
         String fullName = owner + "/" + repo;
-        GithubRepo entity = new GithubRepo(1L,fullName,"description","url",5,null);
-        GithubRepoUpdateRequestDto requestDto = new GithubRepoUpdateRequestDto("BulandaK/githubRepo","repo to exercise feign","url",10,null);
+        GithubRepo entity = new GithubRepo(1L, fullName, "description", "url", 5, null);
+        GithubRepoUpdateRequestDto requestDto = new GithubRepoUpdateRequestDto("BulandaK/githubRepo", "repo to exercise feign", "url", 10, null);
 
         when(repoValidator.validateAndGet(anyString())).thenReturn(entity);
 
-        GithubRepoDto result = repoService.updateInDatabase(owner,repo,requestDto);
+        GithubRepoDto result = repoService.updateLocalRepository(owner, repo, requestDto);
 
         assertAll(
-                () -> assertEquals("BulandaK/githubRepo",result.fullName()),
-                () -> assertEquals("repo to exercise feign",result.description()),
-                () -> assertEquals(10,result.stars())
+                () -> assertEquals("BulandaK/githubRepo", result.fullName()),
+                () -> assertEquals("repo to exercise feign", result.description()),
+                () -> assertEquals(10, result.stars())
         );
 
         verify(repoRepository).save(any(GithubRepo.class));
         verify(repoValidator).validateAndGet(fullName);
     }
+
     @Test
-    void updateInDatabase_IncorrectData_ThrowsResourceNotFoundException() {
+    void updateLocalRepository_IncorrectData_ThrowsResourceNotFoundException() {
         String owner = "BulandaK";
         String repo = "non-existing";
         String fullName = owner + "/" + repo;
-        GithubRepoUpdateRequestDto requestDto = new GithubRepoUpdateRequestDto("BulandaK/githubRepo","repo to exercise feign","url",10,null);
+        GithubRepoUpdateRequestDto requestDto = new GithubRepoUpdateRequestDto("BulandaK/githubRepo", "repo to exercise feign", "url", 10, null);
         String message = "repository not found: ";
 
         when(repoValidator.validateAndGet(anyString())).thenThrow(new ResourceNotFoundException(message));
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
-                () -> repoService.updateInDatabase(owner,repo,requestDto));
+                () -> repoService.updateLocalRepository(owner, repo, requestDto));
 
         Assertions.assertAll(
-                () -> assertEquals(message,exception.getMessage())
+                () -> assertEquals(message, exception.getMessage())
         );
 
         verify(repoValidator).validateAndGet(fullName);
     }
+
     @Test
-    void deleteInDatabase_DataCorrect_ReturnsVoid() {
+    void deleteLocalRepository_DataCorrect_ReturnsVoid() {
         String owner = "BulandaK";
         String repo = "hospital";
         String fullName = owner + "/" + repo;
-        GithubRepo entity = new GithubRepo(1L,fullName,"description","url",5,null);
+        GithubRepo entity = new GithubRepo(1L, fullName, "description", "url", 5, null);
 
         when(repoValidator.validateAndGet(anyString())).thenReturn(entity);
 
-        repoService.deleteInDatabase(owner,repo);
+        repoService.deleteLocalRepository(owner, repo);
         verify(repoRepository).delete(entity);
     }
+
     @Test
-    void deleteInDatabase_DataIncorrect_ThrowsRepositoryNotFound() {
+    void deleteLocalRepository_DataIncorrect_ThrowsRepositoryNotFound() {
         String owner = "BulandaK";
         String repo = "hospital";
         String fullName = owner + "/" + repo;
@@ -226,9 +230,9 @@ public class RepoServiceTest {
                 .thenThrow(new ResourceNotFoundException(message));
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
-                ()-> repoService.deleteInDatabase(owner,repo));
+                () -> repoService.deleteLocalRepository(owner, repo));
 
-        assertEquals(message,exception.getMessage());
+        assertEquals(message, exception.getMessage());
         verify(repoValidator).validateAndGet(fullName);
     }
 }

@@ -14,35 +14,35 @@ public class RepoController {
     private final RepoService repoService;
 
     @GetMapping("/repositories/{owner}/{repository-name}")
-    GithubRepoDto getRepo(@PathVariable("owner") String owner, @PathVariable("repository-name") String repositoryName) {
+    GithubRepoDto getGithubRepository(@PathVariable("owner") String owner, @PathVariable("repository-name") String repositoryName) {
         return repoService.getRepositoryInfo(owner, repositoryName);
     }
 
     @GetMapping("/local/repositories/{owner}/{repository-name}")
-    public GithubRepoDto getRepoFromDatabase(
+    public GithubRepoDto getLocalRepository(
             @PathVariable("owner") String owner,
             @PathVariable("repository-name") String repositoryName) {
-        return repoService.getRepositoryFromDatabase(owner, repositoryName);
+        return repoService.getLocalRepository(owner, repositoryName);
     }
 
     @PostMapping("/repositories/{owner}/{repository-name}")
     @ResponseStatus(HttpStatus.CREATED)
-    GithubRepoDto saveRepoToDatabase(@PathVariable("owner") String owner, @PathVariable("repository-name") String repositoryName) {
+    GithubRepoDto saveLocalRepository(@PathVariable("owner") String owner, @PathVariable("repository-name") String repositoryName) {
         return repoService.saveRepositoryInfo(owner, repositoryName);
     }
 
     @PutMapping("/repositories/{owner}/{repository-name}")
-    GithubRepoDto updateInDatabase(
+    GithubRepoDto updateLocalRepository(
             @PathVariable("owner") String owner,
             @PathVariable("repository-name") String repositoryName,
             @Valid @RequestBody GithubRepoUpdateRequestDto request
     ) {
-        return repoService.updateInDatabase(owner, repositoryName, request);
+        return repoService.updateLocalRepository(owner, repositoryName, request);
     }
 
     @DeleteMapping("/repositories/{owner}/{repository-name}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deleteInDatabase(@PathVariable("owner") String owner, @PathVariable("repository-name") String repositoryName) {
-        repoService.deleteInDatabase(owner, repositoryName);
+    void deleteLocalRepository(@PathVariable("owner") String owner, @PathVariable("repository-name") String repositoryName) {
+        repoService.deleteLocalRepository(owner, repositoryName);
     }
 }

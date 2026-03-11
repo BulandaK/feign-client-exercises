@@ -52,6 +52,7 @@ public class RepoControllerTest {
                 .andExpect(jsonPath("$.cloneUrl").value("github.com/BulandaK/hospital"));
         verify(repoService).getRepositoryInfo(any(), any());
     }
+
     @Test
     void getRepo_GithubReturns500_ReturnGithubExceptionMessage() throws Exception {
         String errorMessage = "GitHub returned Internal Server Error (500)";
@@ -63,13 +64,14 @@ public class RepoControllerTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.content().string(errorMessage));
     }
+
     @Test
     void getRepoFromDatabase_DataCorrect_Returns200andJson() throws Exception {
         String owner = "BulandaK";
         String repo = "hospital";
         GithubRepoDto expectedDto = new GithubRepoDto(1L, "BulandaK/hospital", "desc", "url", 10, null);
 
-        when(repoService.getRepositoryFromDatabase(owner, repo)).thenReturn(expectedDto);
+        when(repoService.getLocalRepository(owner, repo)).thenReturn(expectedDto);
 
         mockMvc.perform(get("/local/repositories/{owner}/{repository-name}", owner, repo)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -78,17 +80,19 @@ public class RepoControllerTest {
                 .andExpect(jsonPath("$.stars").value(10))
                 .andExpect(jsonPath("$.internalId").value(1));
     }
+
     @Test
     void getRepoFromDatabase_RepoNotFound_Returns404() throws Exception {
         String owner = "BulandaK";
         String repo = "not-found";
 
-        when(repoService.getRepositoryFromDatabase(owner, repo))
+        when(repoService.getLocalRepository(owner, repo))
                 .thenThrow(new ResourceNotFoundException("repository not found: " + owner + "/" + repo));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/local/repositories/{owner}/{repository-name}", owner, repo))
                 .andExpect(status().isNotFound());
     }
+
     @Test
     void saveRepoToDatabase_CorrectData_Returns201AndJson() throws Exception {
         String owner = "BulandaK";
@@ -118,6 +122,7 @@ public class RepoControllerTest {
         mockMvc.perform(post("/repositories/{owner}/{repository-name}", owner, repo))
                 .andExpect(status().isConflict());
     }
+
     @Test
     void updateInDatabase_CorrectData_Returns200AndJson() throws Exception {
         String owner = "BulandaK";
@@ -125,7 +130,7 @@ public class RepoControllerTest {
         GithubRepoUpdateRequestDto requestDto = new GithubRepoUpdateRequestDto("BulandaK/new-name", "updated desc", "url", 10, null);
         GithubRepoDto responseDto = new GithubRepoDto(1L, "BulandaK/new-name", "updated desc", "url", 10, null);
 
-        when(repoService.updateInDatabase(anyString(), anyString(), any(GithubRepoUpdateRequestDto.class)))
+        when(repoService.updateLocalRepository(anyString(), anyString(), any(GithubRepoUpdateRequestDto.class)))
                 .thenReturn(responseDto);
 
         mockMvc.perform(put("/repositories/{owner}/{repository-name}", owner, repo)
@@ -136,8 +141,9 @@ public class RepoControllerTest {
                 .andExpect(jsonPath("$.description").value("updated desc"))
                 .andExpect(jsonPath("$.stars").value(10));
 
-        verify(repoService).updateInDatabase(eq(owner), eq(repo), any(GithubRepoUpdateRequestDto.class));
+        verify(repoService).updateLocalRepository(eq(owner), eq(repo), any(GithubRepoUpdateRequestDto.class));
     }
+
     @Test
     void updateInDatabase_BlankFields_Returns400() throws Exception {
         GithubRepoUpdateRequestDto invalidRequest = new GithubRepoUpdateRequestDto(
@@ -151,6 +157,7 @@ public class RepoControllerTest {
 
         verifyNoInteractions(repoService);
     }
+
     @Test
     void updateInDatabase_RepoNotFound_Returns404() throws Exception {
         String owner = "BulandaK";
@@ -159,7 +166,7 @@ public class RepoControllerTest {
                 "BulandaK/new", "desc", "url", 10, LocalDateTime.now()
         );
 
-        when(repoService.updateInDatabase(eq(owner), eq(repo), any()))
+        when(repoService.updateLocalRepository(eq(owner), eq(repo), any()))
                 .thenThrow(new ResourceNotFoundException("Not found"));
 
         mockMvc.perform(put("/repositories/{owner}/{repo}", owner, repo)
