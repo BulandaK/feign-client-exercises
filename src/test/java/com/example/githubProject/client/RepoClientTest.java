@@ -49,4 +49,19 @@ public class RepoClientTest {
                 () -> assertEquals(3, result.stars())
         );
     }
+    @Test
+    void shouldReturnFallbackWhenGithubApiReturns500() {
+        // given
+        wireMockServer.stubFor(WireMock.get("/repositories/error-owner/error-repo")
+                .willReturn(WireMock.aResponse()
+                        .withStatus(500)));
+        // WHEN
+        GithubClientResponse result = repoClient.getRepoByOwnerAndName("error-owner", "error-repo");
+        // then
+        assertAll(
+                () -> assertEquals("BulandaK/defaultRepo", result.fullName()),
+                () -> assertEquals("default repo for fallback", result.description()),
+                () -> assertEquals(5, result.stars())
+        );
+    }
 }
