@@ -1,0 +1,11 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/app/*.log
+    processors:
+      - add_tags:
+          tags: ["github-proxy"]
+
+output.logstash:
+  hosts: ["logstash:5044"]

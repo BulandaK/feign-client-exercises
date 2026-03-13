@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(value = "repoClient", url = "${github.api.url}", configuration = FeignConfig.class,fallbackFactory = GithubRepoFallbackFactory.class)
 public interface RepoClient {
 
-    @GetMapping("/repositories/{owner}/{repo-name}")
+    @GetMapping("/repos/{owner}/{repo-name}")
     GithubClientResponse getRepoByOwnerAndName(@PathVariable("owner") String owner, @PathVariable("repo-name") String repoName);
 }

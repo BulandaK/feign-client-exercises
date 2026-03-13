@@ -33,7 +33,7 @@ public class RepoClientTest {
         //given
         GithubRepo response = new GithubRepo(1L, "hospital", "my hospital app", "github.com/BulandaK/hospital", 3, null);
 
-        wireMockServer.stubFor(WireMock.get("/repositories/owner/name").willReturn(
+        wireMockServer.stubFor(WireMock.get("/repos/owner/name").willReturn(
                 WireMock.aResponse()
                         .withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .withBody(objectMapper.writeValueAsString(response))
